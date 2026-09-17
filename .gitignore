@@ -1,0 +1,16 @@
+# 密钥配置，绝不能上传
+.env
+
+# Python 虚拟环境
+.venv/
+
+# IDE 配置
+.idea/
+
+# 运行数据与输出（朋友运行时会自动生成自己的）
+data/seen.json
+reports/*.md
+
+# Python 缓存
+__pycache__/
+*.pyc
