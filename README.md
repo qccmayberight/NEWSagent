@@ -50,6 +50,9 @@ python main.py
 | `python main.py --once` | 立即生成一次日报后退出 |
 | `python main.py --once --no-ai` | 只聚合新闻，不调用 AI（不需要密钥） |
 | `python main.py --hours 48` | 抓取最近 48 小时的新闻 |
+| `python main.py --topic Jev` | 围绕关键词联网搜索相关报道，生成专题深度分析（存入 `reports/topics/`） |
+| `python main.py --topic Jev --article` | 专题输出为公众号风格长文（`-article.md` 结尾） |
+| `python main.py --topic Jev --url https://...` | 把指定文章（如公众号链接）正文作为参考素材，可多次指定 |
 | `python main.py` | 常驻后台，每天定时自动生成 |
 
 ## 想换新闻源？

@@ -51,3 +51,51 @@ def save_report(content: str) -> Path:
     path = REPORTS_DIR / f"{datetime.now().strftime('%Y-%m-%d')}.md"
     path.write_text(content, encoding="utf-8")
     return path
+
+
+def render_topic_report(keyword: str, items: list[dict], analysis: str | None,
+                        style: str = "analysis") -> str:
+    """生成专题报告的 Markdown 文本。style 为 "article" 时正文是公众号长文。"""
+    today = datetime.now().strftime("%Y-%m-%d")
+    label = "公众号文章" if style == "article" else "专题研究"
+    lines = [f"# {label} · {keyword} · {today}\n"]
+
+    if style != "article":
+        lines.append("## AI 深度分析\n")
+    if analysis:
+        lines.append(analysis)
+    else:
+        lines.append(
+            "> 本期未生成 AI 内容（未配置 `MOONSHOT_API_KEY` 或调用失败）。"
+            "配置后重跑即可获得。"
+        )
+    lines.append("\n---\n")
+
+    lines.append("## 参考新闻列表\n")
+    if not items:
+        lines.append("（未检索到相关新闻）\n")
+    for item in items:
+        title = item.get("title_zh") or item["title"]
+        summary = item.get("summary_zh") or item["summary"]
+        lines.append(f"- [{title}]({item['link']}) — *{item['source']}*")
+        if summary:
+            lines.append(f"  > {summary}")
+        if item.get("title_zh"):
+            lines.append(f"  > 原文：{item['title']}")
+    lines.append("")
+    return "\n".join(lines) + "\n"
+
+
+def topic_report_path(keyword: str, article: bool = False) -> Path:
+    """专题报告的保存路径（reports/topics/日期-关键词.md，文章版加 -article 后缀）。"""
+    slug = keyword.strip().replace(" ", "-")
+    suffix = "-article" if article else ""
+    return REPORTS_DIR / "topics" / f"{datetime.now().strftime('%Y-%m-%d')}-{slug}{suffix}.md"
+
+
+def save_topic_report(keyword: str, content: str, article: bool = False) -> Path:
+    """把专题报告写入 reports/topics/ 目录，返回文件路径。"""
+    path = topic_report_path(keyword, article=article)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    return path
