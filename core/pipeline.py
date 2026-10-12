@@ -4,16 +4,24 @@ from dotenv import load_dotenv
 
 from core.article import fetch_article_text
 from core.fetcher import fetch_all
+from core.reader import fetch_learning_material
 from core.reporter import (
+    render_read_report,
     render_report,
     render_topic_report,
+    save_read_report,
     save_report,
     save_topic_report,
     topic_report_path,
 )
 from core.search import search_topic
 from core.store import filter_new, mark_seen
-from core.summarizer import generate_commentary, generate_topic_analysis, generate_topic_article
+from core.summarizer import (
+    generate_commentary,
+    generate_reading_analysis,
+    generate_topic_analysis,
+    generate_topic_article,
+)
 from core.translator import translate_items
 
 load_dotenv()  # 读取 .env 中的 API 密钥等配置
@@ -77,3 +85,17 @@ def run_topic_job(keyword: str, hours: int = 168, use_ai: bool = True,
     path = save_topic_report(keyword, render_topic_report(keyword, items, analysis, style=style),
                              article=article)
     print(f"[专题] 报告已保存: {path}")
+
+
+def run_read_job(url: str, use_ai: bool = True) -> None:
+    """学习模式：抓取网页或 GitHub 项目内容 → AI 解读 → 生成学习报告。"""
+    print(f"[学习] 开始抓取内容: {url}")
+    material = fetch_learning_material(url)
+    if not material:
+        print("[学习] 未能提取到内容，已终止")
+        return
+
+    analysis = generate_reading_analysis(url, material) if use_ai else None
+
+    path = save_read_report(url, render_read_report(url, analysis))
+    print(f"[学习] 报告已保存: {path}")

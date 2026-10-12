@@ -53,6 +53,7 @@ python main.py
 | `python main.py --topic Jev` | 围绕关键词联网搜索相关报道，生成专题深度分析（存入 `reports/topics/`） |
 | `python main.py --topic Jev --article` | 专题输出为公众号风格长文（`-article.md` 结尾） |
 | `python main.py --topic Jev --url https://...` | 把指定文章（如公众号链接）正文作为参考素材，可多次指定 |
+| `python main.py --learn <URL>` | 解读一个网页或 GitHub 项目：提取内容并生成总结与见解分析（存入 `reports/reads/`），可加 `--no-ai` |
 | `python main.py` | 常驻后台，每天定时自动生成 |
 
 ## 想换新闻源？
@@ -64,4 +65,5 @@ python main.py
 - 没有配置 API 密钥也能用：日报照常生成，只是没有 AI 分析和中文翻译。
 - 密钥类型说明：开放平台（platform.moonshot.cn）的密钥直接可用；Kimi Code 版（`sk-kim...` 开头）的密钥需要在 `.env` 中加一行 `MOONSHOT_BASE_URL=https://api.kimi.com/coding/v1`（见 `.env.example` 注释）。
 - 同一篇新闻不会重复出现在日报里（去重记录在 `data/seen.json`）。
+- `--learn` 解读 GitHub 仓库时使用公开 API（每小时限额 60 次，一般够用）；如需更高限额，可在 `.env` 中加一行 `GITHUB_TOKEN=你的token`。
 - 定时模式依赖电脑处于开机状态；如果希望关机后也能运行，可以改用系统自带的 `cron` / `launchd` 定时执行 `python main.py --once`。

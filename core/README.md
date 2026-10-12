@@ -58,7 +58,17 @@ fetcher.py（抓新闻）→ store.py（去重）→ translator.py（英译中�
 
 **关键功能**：
 - `run_daily_job(hours, use_ai)`：抓取 → 去重 → AI 分析 → 渲染 → 保存 → 标记已读。`main.py` 和定时器调用的都是这个函数。
+- `run_topic_job(keyword, ...)`：专题研究流程，围绕关键词搜索报道并生成深度分析或公众号长文。
+- `run_read_job(url, use_ai)`：学习模式流程，抓取 → AI 解读 → 保存报告到 `reports/reads/`。
 - 启动时自动加载根目录 `.env` 中的密钥配置。
+
+### `reader.py` —— 学习模式内容提取
+
+**作用**：为 `--learn` 命令提取素材。GitHub 仓库链接走公开 REST API（元数据 + README + 根目录结构），普通网页复用 `article.py` 的正文提取。
+
+**关键功能**：
+- `fetch_learning_material(url)`：按 URL 类型自动选择提取方式。
+- `fetch_github_repo(url)`：抓取仓库描述、stars、主语言、topics、根目录文件列表和 README 原文。配置 `GITHUB_TOKEN` 环境变量可提高 API 限额。
 
 ### `__init__.py`
 

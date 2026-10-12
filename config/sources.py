@@ -3,7 +3,7 @@
 想增加 / 删除新闻源，直接改 RSS_SOURCES 列表即可，无需改动其他代码。
 """
 
-# 每个源包含：名称、RSS 地址、所属分类（ai / economy）、语言
+# 每个源包含：名称、RSS 地址、所属分类（ai / ai_coding / economy）、语言
 RSS_SOURCES = [
     # ---------- AI 行业 ----------
     {
@@ -35,6 +35,19 @@ RSS_SOURCES = [
         "url": "https://www.qbitai.com/feed",
         "category": "ai",
         "language": "zh",
+    },
+    # ---------- AI 编程 ----------
+    {
+        "name": "GitHub Blog",
+        "url": "https://github.blog/feed/",
+        "category": "ai_coding",
+        "language": "en",
+    },
+    {
+        "name": "Simon Willison's Weblog",
+        "url": "https://simonwillison.net/atom/everything/",
+        "category": "ai_coding",
+        "language": "en",
     },
     # ---------- 经济行业 ----------
     {

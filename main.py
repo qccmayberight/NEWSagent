@@ -8,6 +8,7 @@
     python main.py --topic Jev       围绕关键词采集新闻并生成专题深度分析
     python main.py --topic Jev --article            输出公众号风格长文
     python main.py --topic Jev --url https://...    把指定文章正文作为参考素材
+    python main.py --learn <URL>      解读一个网页或 GitHub 项目，生成学习分析报告
     python main.py                   常驻运行，每天在 REPORT_TIME（默认 08:00）自动生成
 """
 
@@ -18,7 +19,7 @@ import time
 import schedule
 from dotenv import load_dotenv
 
-from core.pipeline import run_daily_job, run_topic_job
+from core.pipeline import run_daily_job, run_read_job, run_topic_job
 
 load_dotenv()
 
@@ -31,7 +32,12 @@ def main() -> None:
     parser.add_argument("--topic", help="围绕指定关键词生成专题深度分析，如 --topic Jev")
     parser.add_argument("--article", action="store_true", help="专题输出为公众号风格长文（配合 --topic 使用）")
     parser.add_argument("--url", action="append", default=[], help="参考文章链接，正文作为专题素材（可多次指定）")
+    parser.add_argument("--learn", metavar="URL", help="解读一个网页或 GitHub 项目，生成学习分析报告")
     args = parser.parse_args()
+
+    if args.learn:
+        run_read_job(args.learn, use_ai=not args.no_ai)
+        return
 
     if args.topic:
         run_topic_job(args.topic, hours=args.hours or 168, use_ai=not args.no_ai,

@@ -16,7 +16,7 @@ def _api_url() -> str:
     return base + "/chat/completions"
 
 SYSTEM_PROMPT = (
-    "你是一位资深的 AI 行业与宏观经济分析师，长期跟踪科技产业与全球经济动态。"
+    "你是一位资深的 AI 行业与宏观经济分析师，长期跟踪科技产业、AI 编程工具与全球经济动态。"
     "你的读者是想紧跟时代、拿到一手信息的从业者和爱好者。"
     "请基于我提供的新闻列表进行分析和讨论，要求：\n"
     "1. 不要逐条罗列新闻，而是归纳出真正重要的趋势和信号；\n"
@@ -25,6 +25,7 @@ SYSTEM_PROMPT = (
     "4. 用简体中文、Markdown 格式输出，包含以下小节：\n"
     "   ## 今日速览（3-5 句话概括）\n"
     "   ## AI 行业动态\n"
+    "   ## AI 编程动态\n"
     "   ## 经济行业动态\n"
     "   ## 趋势讨论与个人观点\n"
     "   ## 值得持续关注的信号\n"
@@ -61,6 +62,22 @@ ARTICLE_SYSTEM_PROMPT = (
     "6. 篇幅 2000-3500 字，Markdown 格式，素材不足时如实说明，不要编造。"
 )
 
+READER_SYSTEM_PROMPT = (
+    "你是一位技术内容解读专家，擅长快速吃透一篇文章或一个开源项目，"
+    "并把它的全貌讲给一个想系统学习的读者听。"
+    "请基于我提供的素材（网页正文或 GitHub 仓库信息）进行解读，要求：\n"
+    "1. 严格区分\"素材中的事实\"和\"你的推测判断\"，推测部分要明确标注；\n"
+    "2. 用简体中文、Markdown 格式输出，包含以下小节：\n"
+    "   ## 内容概要（这是什么、解决什么问题）\n"
+    "   ## 核心要点（关键原理、架构或功能拆解）\n"
+    "   ## 亮点与价值\n"
+    "   ## 局限与注意事项\n"
+    "   ## 我的见解与讨论\n"
+    "   ## 学习建议（怎么上手、按什么顺序深入、延伸方向）\n"
+    "3. 素材不足以支撑某个小节时直接说明，不要编造；\n"
+    "4. 如果是开源项目，结合元数据（stars、主语言、目录结构等）判断其成熟度与适用场景。"
+)
+
 # 专题分析最多送入模型的新闻条数
 MAX_TOPIC_ITEMS = 25
 
@@ -95,14 +112,15 @@ def _call_kimi(system_prompt: str, user_content: str) -> str | None:
 
 def _format_items(items: list[dict]) -> str:
     """把新闻列表整理成发给模型的文本，每个分类限量，避免超出上下文。"""
+    labels = {"ai": "AI", "ai_coding": "AI编程", "economy": "经济"}
     lines = []
-    count = {"ai": 0, "economy": 0}
+    count = {cat: 0 for cat in labels}
     for item in items:
         cat = item["category"]
         if count.get(cat, 0) >= MAX_ITEMS_PER_CATEGORY:
             continue
         count[cat] = count.get(cat, 0) + 1
-        label = "AI" if cat == "ai" else "经济"
+        label = labels.get(cat, cat)
         title = item.get("title_zh") or item["title"]
         summary = item.get("summary_zh") or item["summary"]
         lines.append(f"- 【{label}｜{item['source']}】{title}\n  摘要：{summary}")
@@ -161,3 +179,11 @@ def generate_topic_article(keyword: str, items: list[dict], notes: str = "",
         return None
     user_content += "\n\n请写一篇公众号长文。"
     return _call_kimi(ARTICLE_SYSTEM_PROMPT, user_content)
+
+
+def generate_reading_analysis(url: str, material: str) -> str | None:
+    """对一个网页或 GitHub 项目的素材生成学习分析，失败时返回 None。"""
+    if not material:
+        return None
+    user_content = f"请解读以下内容（来源：{url}）：\n\n{material}"
+    return _call_kimi(READER_SYSTEM_PROMPT, user_content)

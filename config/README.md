@@ -11,7 +11,7 @@
 - `RSS_SOURCES`：RSS 订阅源列表。每一项是一个字典：
   - `name`：来源名称（会显示在日报里）
   - `url`：RSS 订阅地址
-  - `category`：分类，只能是 `"ai"` 或 `"economy"`，决定它出现在日报的哪个板块、以及被算进哪类分析
+  - `category`：分类，只能是 `"ai"`、`"ai_coding"` 或 `"economy"`，决定它出现在日报的哪个板块、以及被算进哪类分析
   - `language`：语言标记（`zh` / `en`），方便阅读时区分
 - `MAX_ITEMS_PER_CATEGORY`：每个分类最多送多少条新闻给 Kimi 分析（防止内容过长超出模型限制）。
 - `MAX_SUMMARY_CHARS`：每条新闻摘要最多保留多少字符。
