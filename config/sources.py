@@ -3,7 +3,7 @@
 想增加 / 删除新闻源，直接改 RSS_SOURCES 列表即可，无需改动其他代码。
 """
 
-# 每个源包含：名称、RSS 地址、所属分类（ai / ai_coding / economy）、语言
+# 每个源包含：名称、RSS 地址、所属分类（ai / ai_apps / ai_coding / economy）、语言
 RSS_SOURCES = [
     # ---------- AI 行业 ----------
     {
@@ -35,6 +35,31 @@ RSS_SOURCES = [
         "url": "https://www.qbitai.com/feed",
         "category": "ai",
         "language": "zh",
+    },
+    # ---------- AI 应用（产品、落地与实际使用） ----------
+    {
+        "name": "InfoQ 中文",
+        "url": "https://www.infoq.cn/feed",
+        "category": "ai_apps",
+        "language": "zh",
+    },
+    {
+        "name": "极客公园",
+        "url": "https://www.geekpark.net/rss",
+        "category": "ai_apps",
+        "language": "zh",
+    },
+    {
+        "name": "The Decoder",
+        "url": "https://the-decoder.com/feed/",
+        "category": "ai_apps",
+        "language": "en",
+    },
+    {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "category": "ai_apps",
+        "language": "en",
     },
     # ---------- AI 编程 ----------
     {
@@ -72,6 +97,9 @@ RSS_SOURCES = [
 
 # 每个分类每天最多送入 AI 分析的新闻条数（防止超出模型上下文）
 MAX_ITEMS_PER_CATEGORY = 15
+
+# 每个源每天最多抓取的新闻条数（防止单个高频源淹没日报）
+MAX_ITEMS_PER_SOURCE = 10
 
 # 每条新闻摘要最多保留的字符数
 MAX_SUMMARY_CHARS = 200

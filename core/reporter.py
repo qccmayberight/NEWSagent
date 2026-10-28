@@ -11,13 +11,13 @@ from pathlib import Path
 
 REPORTS_DIR = Path(__file__).resolve().parent.parent / "reports"
 
-CATEGORY_LABELS = {"ai": "AI 行业", "ai_coding": "AI 编程", "economy": "经济行业"}
+CATEGORY_LABELS = {"ai": "AI 行业", "ai_apps": "AI 应用", "ai_coding": "AI 编程", "economy": "经济行业"}
 
 
 def render_report(items: list[dict], commentary: str | None) -> str:
     """生成日报的 Markdown 文本。"""
     today = datetime.now().strftime("%Y-%m-%d")
-    lines = [f"# 每日 AI × 经济简报 · {today}\n"]
+    lines = [f"# 每日 AI 简报 · {today}\n"]
 
     lines.append("## AI 分析与讨论\n")
     if commentary:

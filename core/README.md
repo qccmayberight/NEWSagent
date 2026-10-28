@@ -16,7 +16,7 @@ fetcher.py（抓新闻）→ store.py（去重）→ translator.py（英译中�
 **关键功能**：
 - `fetch_source(source, hours)`：抓取单个源，把每条新闻整理成统一格式（标题、链接、摘要、发布时间、来源、分类）。
 - `fetch_all(hours)`：抓取全部源。某个源失败（网络问题、源失效）只打印提示，不影响其他源。
-- 自动清洗摘要中的 HTML 标签，并按发布时间过滤旧闻。
+- 自动清洗摘要中的 HTML 标签，并按发布时间过滤旧闻；每个源最多保留 `MAX_ITEMS_PER_SOURCE` 条，防止单个高频源淹没日报。
 
 ### `store.py` —— 去重存储
 
@@ -28,10 +28,10 @@ fetcher.py（抓新闻）→ store.py（去重）→ translator.py（英译中�
 
 ### `summarizer.py` —— AI 分析与讨论
 
-**作用**：把当天新闻发给 Kimi（月之暗面）大模型，让它以“资深 AI + 经济分析师”的口吻输出有观点的分析，而不是简单罗列。
+**作用**：把当天新闻发给 Kimi（月之暗面）大模型，让它以“资深 AI 分析师”的口吻输出有观点的分析（聚焦 AI 产品与应用落地，金融新闻只保留与 AI 直接相关的部分），而不是简单罗列。
 
 **关键功能**：
-- `generate_commentary(items)`：调用 Moonshot 的 OpenAI 兼容接口，返回 Markdown 格式的分析（今日速览 / AI 动态 / 经济动态 / 趋势讨论 / 值得关注的信号）。
+- `generate_commentary(items)`：调用 Moonshot 的 OpenAI 兼容接口，返回 Markdown 格式的分析（今日速览 / AI 行业动态 / AI 应用动态 / AI 编程动态 / AI 相关的经济信号 / 趋势讨论 / 值得关注的信号）。
 - 没配置 `MOONSHOT_API_KEY` 或调用失败时返回 `None`，日报照常生成，只是没有 AI 部分。
 - `SYSTEM_PROMPT`：定义 AI 的角色和输出格式，想让 AI 换个分析风格就改这里。
 

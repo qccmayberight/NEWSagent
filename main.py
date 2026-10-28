@@ -25,7 +25,7 @@ load_dotenv()
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="每日 AI × 经济新闻 Agent")
+    parser = argparse.ArgumentParser(description="每日 AI 新闻 Agent（聚焦 AI 产品与应用）")
     parser.add_argument("--once", action="store_true", help="立即运行一次后退出")
     parser.add_argument("--no-ai", action="store_true", help="跳过 AI 分析，只聚合新闻")
     parser.add_argument("--hours", type=int, default=None, help="抓取最近多少小时的新闻（日报默认 24，专题默认 168）")

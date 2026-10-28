@@ -4,14 +4,14 @@
 统一整理成 {title, link, summary, published, source, category, language} 的字典结构。
 """
 
+import calendar
 import html
 import re
-import time
 from datetime import datetime, timedelta, timezone
 
 import feedparser
 
-from config.sources import MAX_SUMMARY_CHARS, RSS_SOURCES
+from config.sources import MAX_ITEMS_PER_SOURCE, MAX_SUMMARY_CHARS, RSS_SOURCES
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; NEWSagent/1.0; +https://github.com/)"
@@ -30,15 +30,18 @@ def _parse_time(entry) -> datetime | None:
     parsed = entry.get("published_parsed") or entry.get("updated_parsed")
     if not parsed:
         return None
-    return datetime.fromtimestamp(time.mktime(parsed), tz=timezone.utc)
+    # feedparser 给出的 struct_time 是 UTC，必须用 timegm 而非 mktime（后者按本地时区解释）
+    return datetime.fromtimestamp(calendar.timegm(parsed), tz=timezone.utc)
 
 
 def fetch_source(source: dict, hours: int = 24) -> list[dict]:
-    """抓取单个 RSS 源，返回最近 hours 小时内的新闻列表。"""
+    """抓取单个 RSS 源，返回最近 hours 小时内的新闻列表（最多 MAX_ITEMS_PER_SOURCE 条）。"""
     feed = feedparser.parse(source["url"], request_headers=HEADERS)
     cutoff = datetime.now(tz=timezone.utc) - timedelta(hours=hours)
     items = []
     for entry in feed.entries:
+        if len(items) >= MAX_ITEMS_PER_SOURCE:
+            break
         link = entry.get("link", "").strip()
         title = entry.get("title", "").strip()
         if not link or not title:
